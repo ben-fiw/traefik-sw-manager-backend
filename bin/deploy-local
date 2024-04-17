@@ -1,0 +1,10 @@
+#!/bin/bash
+
+ssh_prv_key="$(cat ~/.ssh/id_ed25519)"
+ssh_pub_key="$(cat ~/.ssh/id_ed25519.pub)"
+ssh_known_hosts="$(cat ~/.ssh/known_hosts)"
+
+SSH_PRIVATE_KEY=$ssh_prv_key \
+    SSH_PUBLIC_KEY=$ssh_pub_key \
+    SSH_KNOWN_HOSTS=$ssh_known_hosts \
+    docker-compose up -d --build

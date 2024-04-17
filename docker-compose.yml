@@ -1,0 +1,73 @@
+version: '3.8'
+
+networks:
+    demo_shop_manager_network:
+        driver: bridge
+
+services:
+    # Application
+    # This service serves the main go application
+    application:
+        build:
+            context: ./
+            dockerfile: Dockerfile
+            args:
+                ssh_prv_key: ${SSH_PRIVATE_KEY}
+                ssh_pub_key: ${SSH_PUBLIC_KEY}
+                ssh_known_hosts: ${SSH_KNOWN_HOSTS}
+        networks:
+            - demo_shop_manager_network
+        volumes:
+            - '.:/app'
+        depends_on:
+            - mysql
+
+    # Database
+    # This service provides the database for the application
+    mysql:
+        image: mysql:latest
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: demo_shop_manager
+            MYSQL_USER: application
+            MYSQL_PASSWORD: password
+        volumes:
+            - './.dockerdata/mysql:/var/lib/mysql'
+        ports:
+            - '3306:3306'
+        networks:
+            - demo_shop_manager_network
+
+    # -------------------
+    # Dev utilities
+    # -------------------
+
+    # PhpMyAdmin
+    # This service provides a web interface for managing the MySQL database.
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        ports:
+            - '8001:80'
+        environment:
+            PMA_HOST: mysql
+            PMA_PORT: 3306
+            PMA_USER: root
+            PMA_PASSWORD: root
+            PMA_THEME: bootstrap
+        networks:
+            - demo_shop_manager_network
+        depends_on:
+            - mysql
+
+    # Insomnia
+    # This service provides a web interface for testing API requests.
+    insomnia:
+        image: camiloariza/insomnia
+        volumes:
+            - '/tmp/.X11-unix:/tmp/.X11-unix'
+            - './.dockerdata/insomnia:/root/.config/Insomnia'
+            - './insomnia-workspace:/data'
+        environment:
+            - DISPLAY=unix$DISPLAY
+        networks:
+            - demo_shop_manager_network

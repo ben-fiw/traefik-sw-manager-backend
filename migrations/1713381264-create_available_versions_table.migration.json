@@ -1,0 +1,10 @@
+{
+    "name": "create_available_versions_table",
+    "timestamp": 1713381264,
+    "up": [
+        "CREATE TABLE available_versions (id varchar(255) PRIMARY KEY, version varchar(8), display_name TEXT, created_at DATETIME, updated_at DATETIME);",
+        "CREATE UNIQUE INDEX id ON available_versions (id);",
+        "CREATE UNIQUE INDEX version ON available_versions (version);"
+    ],
+    "down": ["DROP TABLE available_versions"]
+}

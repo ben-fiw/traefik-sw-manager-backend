@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# Check if an argument is provided
+if [ $# -eq 0 ]; then
+    echo "Usage: $0 <migration_name>"
+    exit 1
+fi
+
+# Create migrations directory if it doesn't exist
+mkdir -p ./migrations
+
+# Generate file name with provided name and Unix timestamp
+filename="./migrations/$(date +%s)-$1.migration.json"
+
+# Create the file and fill it with JSON content
+cat << EOF > "$filename"
+{
+    "name": "$1",
+    "timestamp": $(date +%s),
+    "up": "",
+    "down": ""
+}
+EOF
+
+echo "Migration file created: $filename"
