@@ -1,0 +1,23 @@
+{
+    "name": "create_demo_instances_table",
+    "timestamp": 1713463035,
+    "up": [
+        "CREATE TABLE demo_instances (",
+        "  id varchar(255) PRIMARY KEY NOT NULL,",
+        "  version_id varchar(255) NOT NULL,",
+        "  name varchar(100) NOT NULL,",
+        "  slug varchar(100) NOT NULL,",
+        "  status integer DEFAULT -1,",
+        "  docker_id varchar(255),",
+        "  domain varchar(100),",
+        "  path varchar(100),",
+        "  created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,",
+        "  updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,",
+        "  FOREIGN KEY (version_id) REFERENCES available_versions (id)",
+        ");",
+        "CREATE UNIQUE INDEX demo_instances_slug ON demo_instances (slug);",
+        "CREATE UNIQUE INDEX demo_instances_docker_id ON demo_instances (docker_id);",
+        "CREATE UNIQUE INDEX demo_instances_domain_path ON demo_instances (domain, path);"
+    ],
+    "down": ["DROP TABLE demo_instances;"]
+}

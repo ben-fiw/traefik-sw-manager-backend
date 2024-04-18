@@ -70,3 +70,41 @@ func NewDocumentIndexResponse(total int, page int, pageSize int, documentName st
 		Documents: documents,
 	}
 }
+
+type DocumentReadResponse struct {
+	XMLName xml.Name `json:"-" xml:"response" yaml:"-"`
+	Meta    struct {
+		DocumentName string `json:"documentName" xml:"documentName" yaml:"documentName"`
+	} `json:"meta" xml:"meta" yaml:"meta"`
+	Document interface{} `json:"document" xml:"document" yaml:"document"`
+}
+
+func NewDocumentReadResponse(documentName string, document interface{}) *DocumentReadResponse {
+	return &DocumentReadResponse{
+		Meta: struct {
+			DocumentName string `json:"documentName" xml:"documentName" yaml:"documentName"`
+		}{
+			DocumentName: documentName,
+		},
+		Document: document,
+	}
+}
+
+type DocumentDeleteResponse struct {
+	XMLName xml.Name `json:"-" xml:"response" yaml:"-"`
+	Meta    struct {
+		DocumentName string `json:"documentName" xml:"documentName" yaml:"documentName"`
+	} `json:"meta" xml:"meta" yaml:"meta"`
+	DocumentId string `json:"documentId" xml:"documentId" yaml:"documentId"`
+}
+
+func NewDocumentDeleteResponse(documentName string, documentId string) *DocumentDeleteResponse {
+	return &DocumentDeleteResponse{
+		Meta: struct {
+			DocumentName string `json:"documentName" xml:"documentName" yaml:"documentName"`
+		}{
+			DocumentName: documentName,
+		},
+		DocumentId: documentId,
+	}
+}

@@ -63,6 +63,7 @@ func main() {
 
 	// Initialize model stores
 	models.InitAvailableVersionModelStore(dbConnection)
+	models.InitDemoInstanceModelStore(dbConnection)
 
 	// Get the 'APP_PORT'
 	port := os.Getenv("APP_PORT")

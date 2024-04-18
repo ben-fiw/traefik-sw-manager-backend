@@ -30,7 +30,14 @@ var AvailableVersionModelMeta = ModelMeta{
 
 func InitAvailableVersionModelStore(db *sql.DB) {
 	database.GetModelStoreRegistry().Register(
-		database.NewModelStore(db, AvailableVersionModelMeta.StoreName, &AvailableVersionModel{}, AvailableVersionModelMeta.TableName, AvailableVersionModelMeta.PrimaryKey),
+		database.NewModelStore(
+			db,
+			AvailableVersionModelMeta.StoreName,
+			&AvailableVersionModel{},
+			AvailableVersionModelMeta.TableName,
+			AvailableVersionModelMeta.PrimaryKey,
+			AvailableVersionModelFactory,
+		),
 	)
 }
 
@@ -51,7 +58,7 @@ func (s *AvailableVersionModelList) Paginate(po PaginationParams) error {
 
 	// TODO: fix orderBy issues in the database package
 	// paginateQueryBuilder := database.NewQueryBuilder(database.QueryTypeSelect, AvailableVersionModelMeta.TableName).
-	// 	SetFields("id", "version", "display_name", "created_at", "updated_at").
+	// 	SetFields(AvailableVersionModelMeta.DatabaseColumns...).
 	// 	SetLimit(po.Limit).
 	// 	SetOffset(offset).
 	// 	SetOrder(po.OrderBy)
@@ -125,6 +132,10 @@ type AvailableVersionModel struct {
 	DisplayName string `json:"displayName" xml:"displayName" yaml:"displayName"`
 	CreatedAt   string `json:"createdAt" xml:"createdAt" yaml:"createdAt"`
 	UpdatedAt   string `json:"updatedAt" xml:"updatedAt" yaml:"updatedAt"`
+}
+
+func AvailableVersionModelFactory() database.Model {
+	return &AvailableVersionModel{}
 }
 
 func (s *AvailableVersionModel) GetID() string {

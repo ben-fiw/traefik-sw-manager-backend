@@ -27,51 +27,68 @@ def generate_hex_string(length):
 
 # Function to insert test data into available_versions table
 def insert_versions(cursor, versions):
-    for version in versions:
+    for id, version in versions.items():
         display_name = f"Shopware {version}"
         created_at = random_timestamp(datetime.now() - timedelta(days=365), datetime.now())
         updated_at = random_timestamp(created_at, datetime.now())
         cursor.execute("INSERT INTO available_versions (id, version, display_name, created_at, updated_at) VALUES (%s, %s, %s, %s, %s)",
-                (generate_uuid(), version, display_name, created_at, updated_at))
+                (id, version, display_name, created_at, updated_at))
+
+# Function to insert test data into demo_instances table
+def insert_instances(cursor, num_instances, versions):
+    for _ in range(num_instances):
+        instance_id = generate_uuid()
+        version_id = random.choice(list(versions.keys()))
+        name = f"Demo Shop {versions[version_id]} {generate_hex_string(8)}"
+        slug = name.lower().replace(" ", "-")
+        status = random.choice([-1, 0, 1, 2, 3])
+        docker_id = generate_hex_string(64)
+        has_path = random.choice([True, False])
+        domain = "localhost" if has_path else f"{slug}.localhost"
+        path = f"/{slug}" if has_path else ""
+        created_at = random_timestamp(datetime.now() - timedelta(days=365), datetime.now())
+        updated_at = random_timestamp(created_at, datetime.now())
+        cursor.execute("INSERT INTO demo_instances (id, version_id, name, slug, status, docker_id, domain, path, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                (instance_id, version_id, name, slug, status, docker_id, domain, path, created_at, updated_at))
 
 # Define data parameters
-versions = [
-    "6.6.1.0",
-    "6.6.0.2",
-    "6.6.0.1",
-    "6.6.0.0",
-    "6.5.8.9",
-    "6.5.8.8",
-    "6.5.8.7",
-    "6.5.8.6",
-    "6.5.8.5",
-    "6.5.8.4",
-    "6.5.8.3",
-    "6.5.8.2",
-    "6.5.8.1",
-    "6.5.8.0",
-    "6.5.7.4",
-    "6.5.7.3",
-    "6.5.7.2",
-    "6.5.7.1",
-    "6.5.7.0",
-    "6.5.6.1",
-    "6.5.6.0",
-    "6.5.5.2",
-    "6.5.5.1",
-    "6.5.5.0",
-    "6.5.4.1",
-    "6.5.4.0",
-    "6.5.3.3",
-    "6.5.3.2",
-    "6.5.3.1",
-    "6.5.3.0",
-    "6.5.2.1",
-    "6.5.2.0",
-    "6.5.1.1",
-    "6.5.1.0",
-    "6.5.0.0"
-]
+versions = {
+    generate_uuid(): "6.6.1.0",
+    generate_uuid(): "6.6.0.2",
+    generate_uuid(): "6.6.0.1",
+    generate_uuid(): "6.6.0.0",
+    generate_uuid(): "6.5.8.9",
+    generate_uuid(): "6.5.8.8",
+    generate_uuid(): "6.5.8.7",
+    generate_uuid(): "6.5.8.6",
+    generate_uuid(): "6.5.8.5",
+    generate_uuid(): "6.5.8.4",
+    generate_uuid(): "6.5.8.3",
+    generate_uuid(): "6.5.8.2",
+    generate_uuid(): "6.5.8.1",
+    generate_uuid(): "6.5.8.0",
+    generate_uuid(): "6.5.7.4",
+    generate_uuid(): "6.5.7.3",
+    generate_uuid(): "6.5.7.2",
+    generate_uuid(): "6.5.7.1",
+    generate_uuid(): "6.5.7.0",
+    generate_uuid(): "6.5.6.1",
+    generate_uuid(): "6.5.6.0",
+    generate_uuid(): "6.5.5.2",
+    generate_uuid(): "6.5.5.1",
+    generate_uuid(): "6.5.5.0",
+    generate_uuid(): "6.5.4.1",
+    generate_uuid(): "6.5.4.0",
+    generate_uuid(): "6.5.3.3",
+    generate_uuid(): "6.5.3.2",
+    generate_uuid(): "6.5.3.1",
+    generate_uuid(): "6.5.3.0",
+    generate_uuid(): "6.5.2.1",
+    generate_uuid(): "6.5.2.0",
+    generate_uuid(): "6.5.1.1",
+    generate_uuid(): "6.5.1.0",
+    generate_uuid(): "6.5.0.0"
+}
 
 # Connect to your database using appropriate library (e.g., psycopg2 for PostgreSQL, mysql.connector for MySQL)
 # Replace the placeholders with actual connection details
@@ -86,6 +103,9 @@ cursor = conn.cursor()
 
 # Insert test data into service_connections table
 insert_versions(cursor, versions)
+
+# Insert test data into demo_instances table
+insert_instances(cursor, 100, versions)
 
 # Commit changes and close connection
 conn.commit()
